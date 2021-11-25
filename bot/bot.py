@@ -10,6 +10,7 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
+    print(message.from_user.id)
     await message.reply("Привет!\nНапиши мне что-нибудь!")
 
 

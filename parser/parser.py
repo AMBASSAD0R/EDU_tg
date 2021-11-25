@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from config import URL
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 
 
 class Parse:
@@ -36,12 +35,16 @@ class Parse:
             res.append(items[i])
             res.append(items2[i])
         return res
+
+    def driver_close(self):
+        self.driver.quit()
     
     def main(self):
         self.go_to_page(URL)
         html = self.get_html_selenium()
-        print(html)
+        self.driver_close()
+        res = self.get_td(html)
+        return res
 
 a = Parse()
 a.main()
-#print(get_td(get_html(URL)))
