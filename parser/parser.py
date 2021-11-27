@@ -7,7 +7,12 @@ from selenium import webdriver
 
 class Parse:
     def __init__(self) -> None:
-        self.driver = webdriver.Firefox()
+        option = webdriver.FirefoxOptions()
+        option.set_preference('dom.webdriver.enabled', False)
+        option.set_preference('dom.webnotifications.enabled', False)
+        option.set_preference('media.volume_scale', '0.0')
+        option.headless = True
+        self.driver = webdriver.Firefox(options=option)
 
     def go_to_page(self, url):
         self.driver.get(url)
@@ -32,8 +37,9 @@ class Parse:
         items2 = soup.findAll('td', class_='answer')
         res = []
         for i in range(len(items)):
-            res.append(items[i])
-            res.append(items2[i])
+            res.append(items[i].text)
+            res.append('https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', ''))
+            res.append(items2[i].text)
         return res
 
     def driver_close(self):
@@ -47,4 +53,6 @@ class Parse:
         return res
 
 a = Parse()
-a.main()
+for i in a.main():
+    print(i)
+    print('_------------------------------------_')
