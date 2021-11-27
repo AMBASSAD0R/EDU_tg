@@ -4,7 +4,8 @@ from fake_useragent import UserAgent
 from config import URL
 from selenium import webdriver
 import requests
-
+from sql import SQL
+import aiogram
 
 
 class Parse:
@@ -15,6 +16,7 @@ class Parse:
         option.set_preference('media.volume_scale', '0.0')
         option.headless = True
         self.driver = webdriver.Firefox(options=option)
+        self.db = SQL('database.db')
 
     def go_to_page(self, url):
         self.driver.get(url)
@@ -67,6 +69,10 @@ class Parse:
         out = open(path, "wb")
         out.write(p.content)
         out.close()
+
+    def update_db(self, sp):
+        for i in sp:
+            pass
 
     def get_index_space(self, text):
         ind = 0
