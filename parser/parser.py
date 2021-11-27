@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from config import URL
 from selenium import webdriver
+import requests
+
 
 
 class Parse:
@@ -38,15 +40,22 @@ class Parse:
         res = []
         for i in range(len(items)):
             res.append(self.work_text_task(items[i].text))
-            try:
-                res.append('https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', ''))
-            except:
-                pass
+
+            url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
+            path = 'data/' + url.split('/')[-1]
+            self.get_photo(url, path)
+            res.append(path)
             res.append(self.work_text_answer(items2[i].text))
         return res
 
     def driver_close(self):
         self.driver.quit()
+
+    def get_photo(self, url, path):
+        p = requests.get(url)
+        out = open(path, "wb")
+        out.write(p.content)
+        out.close()
 
     def get_index_space(self, text):
         ind = 0
