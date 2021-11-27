@@ -39,19 +39,30 @@ class Parse:
         items2 = soup.findAll('td', class_='answer')
         res = []
         for i in range(len(items)):
-            res.append(self.work_text_task(items[i].text))
-
-            url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
-            path = 'data/' + url.split('/')[-1]
-            self.get_photo(url, path)
-            res.append(path)
-            res.append(self.work_text_answer(items2[i].text))
+            sp = []
+            sp.append(self.work_text_task(items[i].text))
+            try:
+                url = 'https://kpolyakov.spb.ru/' + items[i].find('a')['href'].replace('../../', '')
+                path = 'data/' + url.split('/')[-1]
+                self.get_file(url, path)
+                sp.append(path)
+            except Exception as e:
+                print(e)
+            try:
+                url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
+                path = 'data/' + url.split('/')[-1]
+                self.get_file(url, path)
+                sp.append(path)
+            except Exception as e:
+                print(e)
+            sp.append(self.work_text_answer(items2[i].text))
+            res.append(sp)
         return res
 
     def driver_close(self):
         self.driver.quit()
 
-    def get_photo(self, url, path):
+    def get_file(self, url, path):
         p = requests.get(url)
         out = open(path, "wb")
         out.write(p.content)
