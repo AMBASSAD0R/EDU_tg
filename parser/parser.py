@@ -37,13 +37,37 @@ class Parse:
         items2 = soup.findAll('td', class_='answer')
         res = []
         for i in range(len(items)):
-            res.append(items[i].text)
-            res.append('https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', ''))
-            res.append(items2[i].text)
+            res.append(self.work_text_task(items[i].text))
+            try:
+                res.append('https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', ''))
+            except:
+                pass
+            res.append(self.work_text_answer(items2[i].text))
         return res
 
     def driver_close(self):
         self.driver.quit()
+
+    def get_index_space(self, text):
+        ind = 0
+        count_space = 0
+        for j, i in enumerate(text):
+            if i == ' ':
+                ind = j
+                count_space += 1
+            if count_space == 1:
+                return ind
+
+    def work_text_task(self, text):
+        ind = self.get_index_space(text)
+        text = text.replace('\n', '')
+        text = text[ind:]
+        return text
+
+    def work_text_answer(self, text):
+        text = text.replace('\n', '')
+        text = text.replace('Показать ответ', '')
+        return text
     
     def main(self):
         self.go_to_page(URL)
