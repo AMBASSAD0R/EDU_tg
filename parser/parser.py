@@ -36,7 +36,6 @@ class Parse:
         response = requests.get(url, headers=HEADERS)
         return response.content
 
-
     def get_td(self, html):
         soup = BeautifulSoup(html, 'html.parser')
         items = soup.findAll('td', class_='topicview')
@@ -131,7 +130,7 @@ class Parse:
                 self.db.create_task(i[0], 'Информатика', i[1], i[-1], None, i[2])
             else:
                 self.db.create_task(i[0], 'Информатика', i[1], i[-1], None, None)
-    
+
     def main(self):
         self.go_to_page(URL)
         html = self.get_html_selenium()
@@ -141,7 +140,7 @@ class Parse:
         self.update_db(res)
         return res
 
-a = Parse()
-for i in a.main():
-    print(i)
-    print('_------------------------------------_')
+# a = Parse()
+# for i in a.main():
+#     print(i)
+#     print('_------------------------------------_')

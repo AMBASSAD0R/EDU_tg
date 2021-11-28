@@ -1,13 +1,14 @@
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-from db import Work_DB
+from db import WorkDB
 from config import TOKEN
 from datetime import datetime
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-db = Work_DB('./database.db')
+db = WorkDB('./database.db')
+
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(msg: types.Message):
