@@ -5,7 +5,8 @@ from config import URL
 from selenium import webdriver
 import requests
 from sql import SQL
-import aiogram
+import telebot
+import time
 
 
 class Parse:
@@ -17,6 +18,7 @@ class Parse:
         option.headless = True
         self.driver = webdriver.Firefox(options=option)
         self.db = SQL('database.db')
+        self.bot = telebot.TeleBot('2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA')
 
     def go_to_page(self, url):
         self.driver.get(url)
@@ -42,19 +44,23 @@ class Parse:
         res = []
         for i in range(len(items)):
             sp = []
-            sp.append(self.work_text_task(items[i].text))
+            sp1 = self.work_text_task(items[i].text)
+            sp.append(sp1[1])
+            sp.append(sp1[0])
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('a')['href'].replace('../../', '')
                 path = 'data/' + url.split('/')[-1]
                 self.get_file(url, path)
-                sp.append(path)
+                file_id = self.work_document('604900292', path)
+                sp.append(file_id)
             except Exception as e:
                 print(e)
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
                 path = 'data/' + url.split('/')[-1]
                 self.get_file(url, path)
-                sp.append(path)
+                file_id = self.work_photo('604900292', path)
+                sp.append(file_id)
             except Exception as e:
                 print(e)
             sp.append(self.work_text_answer(items2[i].text))
@@ -70,10 +76,6 @@ class Parse:
         out.write(p.content)
         out.close()
 
-    def update_db(self, sp):
-        for i in sp:
-            pass
-
     def get_index_space(self, text):
         ind = 0
         count_space = 0
@@ -86,20 +88,57 @@ class Parse:
 
     def work_text_task(self, text):
         ind = self.get_index_space(text)
+        id = text[:ind]
+        id1 = ''
+        for i in id:
+            if i in '0123456789':
+                id1 += i
         text = text.replace('\n', '')
         text = text[ind:]
-        return text
+        return text, id1
 
     def work_text_answer(self, text):
         text = text.replace('\n', '')
         text = text.replace('Показать ответ', '')
         return text
+
+    def work_photo(self, chat_id, path):
+        try:
+            photo = self.bot.send_photo(chat_id, open(f'{path}', 'rb'))
+            file_id = photo.photo[0].file_id
+            time.sleep(1)
+            return file_id
+        except Exception as e:
+            print(e)
+
+    def work_document(self, chat_id, path):
+        try:
+            msg = self.bot.send_document(chat_id, open(f'{path}', 'rb'))
+            file_id = msg.document.file_id
+            time.sleep(1)
+            return file_id
+        except Exception as e:
+            print(e)
+
+    def check_task_in_bd(self, id):
+        return self.db.check_tasks(id)
+
+    def update_db(self, sp):
+        for i in sp:
+            if len(i) == 5:
+                self.db.create_task(i[0], 'Информатика', i[1], i[-1], i[2], i[3])
+            if len(i) == 4:
+                self.db.create_task(i[0], 'Информатика', i[1], i[-1], None, i[2])
+            else:
+                self.db.create_task(i[0], 'Информатика', i[1], i[-1], None, None)
     
     def main(self):
         self.go_to_page(URL)
         html = self.get_html_selenium()
         self.driver_close()
         res = self.get_td(html)
+        print(res)
+        self.update_db(res)
         return res
 
 a = Parse()
