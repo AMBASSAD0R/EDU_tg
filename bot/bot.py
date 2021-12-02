@@ -2,12 +2,15 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from db import WorkDB
-from config import TOKEN
+from config import TOKEN, greet_kb, greet_kb1
 from datetime import datetime
+from aiogram.types import ReplyKeyboardRemove, \
+    ReplyKeyboardMarkup, KeyboardButton, \
+    InlineKeyboardMarkup, InlineKeyboardButton
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-db = WorkDB('./database.db')
+db = WorkDB('../database.db')
 
 
 @dp.message_handler(commands=['start'])
@@ -20,13 +23,31 @@ async def process_start_command(msg: types.Message):
 @dp.message_handler(commands=['start', 'help'])
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!")
+    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!", reply_markup=greet_kb)
 
 
 @dp.message_handler()
 async def echo_message(msg: types.Message):
     db.update_date_use(msg.from_user.id, datetime.now())
-    await bot.send_message(msg.from_user.id, msg.text)
+    try:
+        task = db.get_task(msg.text)
+        lst = [j for i in task for j in i]
+    except:
+        pass
+    #lst = [j for i in task for j in i]
+    try:
+        if lst[-1] != None:
+            await bot.send_photo(msg.from_user.id, lst[-1])
+        if lst[-2] != None:
+            pass
+    except:
+        pass
+    if msg.text == 'Каталог заданий':
+        await bot.send_message(msg.from_user.id, text='Rfjf', reply_markup=greet_kb1)
+    try:
+        await bot.send_message(msg.from_user.id, lst[2])
+    except:
+        pass
 
 
 if __name__ == '__main__':
