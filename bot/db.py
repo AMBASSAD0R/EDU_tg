@@ -32,11 +32,11 @@ class WorkDB:
             result = self.cursor.execute(get_q).fetchall()
             return int(str(result[0])[1:-2])
 
-    def get_erorr(self, user_id):
-        get_q = f'SELECT col_erorr FROM user_info WHERE user_id = {user_id};'
+    def get_task(self, id):
+        get_q = f'SELECT * FROM tasks WHERE id = {id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
-            return int(str(result[0])[1:-2])
+            return result
 
     def update_col_quetions(self, user_id, count_quetions):
         """Обновляем статус подписки пользователя"""

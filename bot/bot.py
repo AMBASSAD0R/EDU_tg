@@ -17,13 +17,12 @@ db = WorkDB('../database.db')
 async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
         db.create_user(msg.from_user.id, datetime.now(), datetime.now())
-    await msg.reply("Привет!\nНапиши мне что-нибудь!")
+    await msg.reply("Привет!\nНапиши мне что-нибудь!", reply_markup=greet_kb)
 
 
-@dp.message_handler(commands=['start', 'help'])
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!", reply_markup=greet_kb)
+    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!")
 
 
 @dp.message_handler()
@@ -34,7 +33,6 @@ async def echo_message(msg: types.Message):
         lst = [j for i in task for j in i]
     except:
         pass
-    #lst = [j for i in task for j in i]
     try:
         if lst[-1] != None:
             await bot.send_photo(msg.from_user.id, lst[-1])

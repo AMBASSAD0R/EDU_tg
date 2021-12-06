@@ -6,11 +6,11 @@ class SQL:
         self.connection = sqlite3.connect(path_db)
         self.cursor = self.connection.cursor()
 
-    def create_task(self, id, subject, text_tasks, answer, file_id, photo_id):
+    def create_task(self, id, subject, number_task, text_tasks, answer, file_id, photo_id):
         with self.connection:
             return self.cursor.execute(
-                "INSERT INTO 'tasks' (id, subject, text_task, answer, file_id, photo_id)  VALUES  (?,?,?)",
-                (id, subject, text_tasks, answer, file_id, photo_id))
+                "INSERT INTO 'tasks' (id, subject, number_task, text_task, answer, file_id, photo_id)  VALUES  (?,?,?)",
+                (id, subject, number_task, text_tasks, answer, file_id, photo_id))
 
     def check_tasks(self, id):
         """Проверяем, есть ли уже юзер в базе"""
