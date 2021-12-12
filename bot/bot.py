@@ -46,6 +46,12 @@ async def echo_message(msg: types.Message):
         await bot.send_message(msg.from_user.id, lst[2])
     except:
         pass
+    if msg.text == 'В начало':
+        pass
+    if msg.text in [i for i in range(1, 28)]:
+        pass
+    if msg.text == 'Статистика':
+        pass
 
 
 if __name__ == '__main__':
