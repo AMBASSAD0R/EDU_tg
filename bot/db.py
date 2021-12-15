@@ -47,6 +47,12 @@ class WorkDB:
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
             return result
+        
+    def get_all_task(self, number_task):
+        get_q = f'SELECT * FROM tasks WHERE number_task = {number_task};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            return result
 
     def update_col_quetions(self, user_id, count_quetions):
         """Обновляем статус подписки пользователя"""
