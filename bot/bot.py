@@ -39,7 +39,7 @@ async def echo_message(msg: types.Message):
         if lst[-1] != None:
             await bot.send_photo(msg.from_user.id, lst[-1])
         if lst[-2] != None:
-            pass
+            await bot.send_file(msg.from_user.id, lst[-2])
     except:
         pass
     if msg.text == 'Каталог заданий':
