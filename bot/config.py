@@ -6,7 +6,7 @@ TOKEN = '2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA'
 
 greet_kb1 = ReplyKeyboardMarkup()
 for i in range(1, 28):
-    but = KeyboardButton(str(i))
+    but = KeyboardButton('№' + str(i))
     greet_kb1.add(but)
 greet_kb1.add(KeyboardButton('В начало'))
 

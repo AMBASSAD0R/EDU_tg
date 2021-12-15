@@ -36,11 +36,11 @@ class WorkDB:
         self.sqlite_connection.close()
         return True
 
-    def get_quetions(self, user_id):
-        get_q = f'SELECT col_quetions FROM user_info WHERE user_id = {user_id};'
+    def get_task_id_user(self, user_id):
+        get_q = f'SELECT task_id FROM user_task WHERE user_id = {user_id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
-            return int(str(result[0])[1:-2])
+            return result
 
     def get_task(self, id):
         get_q = f'SELECT * FROM tasks WHERE id = {id};'

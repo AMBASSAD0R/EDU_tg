@@ -50,11 +50,12 @@ async def echo_message(msg: types.Message):
 
     if msg.text == 'Каталог заданий':
         await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
-    if msg.text == 'В начало':
+    elif msg.text == 'В начало':
         await bot.send_message(msg.from_user.id, text='Вы вернулись в меню', reply_markup=greet_kb)
         db.update_task_id(msg.from_user.id, -100)
-    if int(msg.text) in [i for i in range(1, 28)]:
-        sp = db.get_all_task(msg.text)
+    elif msg.text in ['№' + str(i) for i in range(1, 28)]:
+        a = msg.text[1:]
+        sp = db.get_all_task(a)
         id1 = random.choice(sp)
         task_id = id1[0]
         db.update_task_id(msg.from_user.id, task_id)
@@ -72,7 +73,11 @@ async def echo_message(msg: types.Message):
             await bot.send_message(msg.from_user.id, lst[3])
         except:
             pass
-    if msg.text == 'Статистика':
+    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
+        await bot.send_message(msg.from_user.id, text='Правильный ответ', reply_markup=greet_kb1)
+    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
+        await bot.send_message(msg.from_user.id, text='Не правильный ответ', reply_markup=greet_kb1)
+    elif msg.text == 'Статистика':
         pass
 
 
