@@ -28,55 +28,51 @@ async def process_help_command(message: types.Message):
 @dp.message_handler()
 async def echo_message(msg: types.Message):
     db.update_date_use(msg.from_user.id, datetime.now())
-    #try:
-    #    task = db.get_task(msg.text)
-    #    lst = [j for i in task for j in i]
-    #    print(lst)
-    #except:
-    #    await bot.send_message("Приносим извинения, такого задания нет.")
-    #try:
-    #    if lst[-1] != None:  # Если в задание есть фото - отправляем
-    #        await bot.send_photo(msg.from_user.id, lst[-1])
-    #    if lst[-2] != None:  # Если в задание есть файл - отправляем
-    #        await bot.send_file(msg.from_user.id, lst[-2])
-    #except:
-    #    pass
-    #try:
-    #    await bot.send_message(msg.from_user.id, lst[3])
-    #except:
-    #    pass
 
     # Обработка клавиатуры
 
     if msg.text == 'Каталог заданий':
         await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
+
     elif msg.text == 'В начало':
         await bot.send_message(msg.from_user.id, text='Вы вернулись в меню', reply_markup=greet_kb)
         db.update_task_id(msg.from_user.id, -100)
+
     elif msg.text in ['№' + str(i) for i in range(1, 28)]:
-        a = msg.text[1:]
-        sp = db.get_all_task(a)
-        id1 = random.choice(sp)
-        task_id = id1[0]
+        task_number_ege = msg.text[1:]
+
+        all_tasks = db.get_all_task(task_number_ege)
+
+        index = random.choice(all_tasks)
+
+        task_id = index[0]
+
         db.update_task_id(msg.from_user.id, task_id)
         task = db.get_task(task_id)
-        lst = [j for i in task for j in i]
-        print(lst)
+
+        data = [j for i in task for j in i]
+        print(data)
         try:
-            if lst[-1] != None:  # Если в задание есть фото - отправляем
-                await bot.send_photo(msg.from_user.id, lst[-1])
-            if lst[-2] != None:  # Если в задание есть файл - отправляем
-                await bot.send_file(msg.from_user.id, lst[-2])
+            if data[-1]:  # Если в задание есть фото - отправляем
+                await bot.send_photo(msg.from_user.id, data[-1])
+            if data[-2]:  # Если в задание есть файл - отправляем
+                await bot.send_document(msg.from_user.id, data[-2])
         except:
             pass
+
         try:
-            await bot.send_message(msg.from_user.id, lst[3])
+            await bot.send_message(msg.from_user.id, data[3])
         except:
             pass
-    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
+
+    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == \
+            db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
         await bot.send_message(msg.from_user.id, text='Правильный ответ', reply_markup=greet_kb1)
-    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
+
+    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != \
+            db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
         await bot.send_message(msg.from_user.id, text='Не правильный ответ', reply_markup=greet_kb1)
+
     elif msg.text == 'Статистика':
         pass
 
