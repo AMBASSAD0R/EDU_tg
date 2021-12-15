@@ -4,9 +4,7 @@ from aiogram.utils import executor
 from db import WorkDB
 from config import TOKEN, greet_kb, greet_kb1
 from datetime import datetime
-from aiogram.types import ReplyKeyboardRemove, \
-    ReplyKeyboardMarkup, KeyboardButton, \
-    InlineKeyboardMarkup, InlineKeyboardButton
+import random
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
@@ -17,6 +15,7 @@ db = WorkDB('../database.db')
 async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
         db.create_user(msg.from_user.id, datetime.now(), datetime.now())
+        db.add_user_in_user_task(msg.from_user.id, -100)
     await msg.reply("Привет!\nЭто бот по подготовке к ЕГЭ по информатике!\n", reply_markup=greet_kb)
 
 
@@ -53,8 +52,12 @@ async def echo_message(msg: types.Message):
         await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
     if msg.text == 'В начало':
         await bot.send_message(msg.from_user.id, text='Вы вернулись в меню', reply_markup=greet_kb)
-    if msg.text in [i for i in range(1, 28)]:
-        pass
+        db.update_task_id(msg.from_user.id, -100)
+    if int(msg.text) in [i for i in range(1, 28)]:
+        sp = db.get_all_task(msg.text)
+        id1 = random.choice(sp)
+        task_id = id1[0]
+        db.update_task_id(msg.from_user.id, task_id)
     if msg.text == 'Статистика':
         pass
 
