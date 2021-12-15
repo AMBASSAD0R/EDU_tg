@@ -17,12 +17,12 @@ db = WorkDB('../database.db')
 async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
         db.create_user(msg.from_user.id, datetime.now(), datetime.now())
-    await msg.reply("Привет!\nЭто бот по подготовке к ЕГЭ по информатике!", reply_markup=greet_kb)
+    await msg.reply("Привет!\nЭто бот по подготовке к ЕГЭ по информатике!\n", reply_markup=greet_kb)
 
 
-@dp.message_handler(commands=['help'])
+@dp.message_handler(commands=['description'])
 async def process_help_command(message: types.Message):
-    await message.reply("Напиши мне что-нибудь, и я отпрпавлю этот текст тебе в ответ!")
+    await message.reply("Этот бот поможет тебе подготовится к ЕГЭ по информатике.\nВыполняя задания каждый день, ты ГАРАНТИРОВАНО получишь высокий балл!")
 
 
 @dp.message_handler()
