@@ -59,7 +59,6 @@ async def echo_message(msg: types.Message):
                 await bot.send_document(msg.from_user.id, data[-2])
         except:
             pass
-
         try:
             await bot.send_message(msg.from_user.id, data[3])
         except:
@@ -74,7 +73,8 @@ async def echo_message(msg: types.Message):
         await bot.send_message(msg.from_user.id, text='Не правильный ответ', reply_markup=greet_kb1)
 
     elif msg.text == 'Статистика':
-        await bot.send_message(msg.from_user.id, text='К сожалению эта функция ещё не готова.\nВы вернулись в меню', reply_markup=greet_kb)
+        await bot.send_message(msg.from_user.id, text='К сожалению эта функция ещё не готова.\nВы вернулись в меню',
+                               reply_markup=greet_kb)
         pass
 
 
