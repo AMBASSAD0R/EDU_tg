@@ -22,7 +22,8 @@ async def process_start_command(msg: types.Message):
 
 @dp.message_handler(commands=['description'])
 async def process_help_command(message: types.Message):
-    await message.reply("Этот бот поможет тебе подготовится к ЕГЭ по информатике.\nВыполняя задания каждый день, ты ГАРАНТИРОВАНО получишь высокий балл!")
+    await message.reply("Этот бот поможет тебе подготовится к ЕГЭ по информатике.\nВыполняя задания каждый день, ты\
+     ГАРАНТИРОВАНО получишь высокий балл!")
 
 
 @dp.message_handler()
@@ -33,21 +34,21 @@ async def echo_message(msg: types.Message):
         lst = [j for i in task for j in i]
         print(lst)
     except:
-        await message.reply("Приносим извинения, такого задания нет.")
+        await bot.send_message("Приносим извинения, такого задания нет.")
     try:
         if lst[-1] != None:  # Если в задание есть фото - отправляем
             await bot.send_photo(msg.from_user.id, lst[-1])
         if lst[-2] != None:  # Если в задание есть файл - отправляем
             await bot.send_file(msg.from_user.id, lst[-2])
-    except:  
+    except:
         pass
     try:
         await bot.send_message(msg.from_user.id, lst[3])
     except:
         pass
-    
+
     # Обработка клавиатуры
-    
+
     if msg.text == 'Каталог заданий':
         await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
     if msg.text == 'В начало':

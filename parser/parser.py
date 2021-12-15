@@ -139,8 +139,3 @@ class Parse:
         print(res)
         self.update_db(res)
         return res
-
-# a = Parse()
-# for i in a.main():
-#     print(i)
-#     print('_------------------------------------_')
