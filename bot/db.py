@@ -22,6 +22,16 @@ class WorkDB:
             return self.cursor.execute('''UPDATE `users` SET `date_last_use` = ? WHERE `user_id` = ?''',
                                        (date_use, user_id))
 
+    def update_task_id(self, user_id, task_id):
+        with self.connection:
+            return self.cursor.execute('''UPDATE `user_task` SET `task_id` = ? WHERE `user_id` = ?''',
+                                       (task_id, user_id))
+
+    def add_user_in_user_task(self, user_id, task_id):
+        with self.connection:
+            return self.cursor.execute('''INSERT INTO 'user_task' (user_id, task_id)  VALUES  (?,?,?)''',
+                                       (user_id, task_id))
+
     def close_connection(self):
         self.sqlite_connection.close()
         return True
