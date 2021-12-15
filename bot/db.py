@@ -40,7 +40,7 @@ class WorkDB:
         get_q = f'SELECT task_id FROM user_task WHERE user_id = {user_id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
-            //print(str(result)[2:-3])
+            print(str(result)[2:-3])
             return str(result)[2:-3]
 
     def get_task(self, id):
