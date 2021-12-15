@@ -29,7 +29,7 @@ class WorkDB:
 
     def add_user_in_user_task(self, user_id, task_id):
         with self.connection:
-            return self.cursor.execute('''INSERT INTO 'user_task' (user_id, task_id)  VALUES  (?,?,?)''',
+            return self.cursor.execute('''INSERT INTO 'user_task' (user_id, task_id)  VALUES  (?,?)''',
                                        (user_id, task_id))
 
     def close_connection(self):
@@ -40,12 +40,17 @@ class WorkDB:
         get_q = f'SELECT task_id FROM user_task WHERE user_id = {user_id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
-            return result
+            //print(str(result)[2:-3])
+            return str(result)[2:-3]
 
     def get_task(self, id):
-        get_q = f'SELECT * FROM tasks WHERE id = {id};'
         with self.connection:
-            result = self.cursor.execute(get_q).fetchall()
+            result = self.cursor.execute('SELECT * FROM tasks WHERE id = ?', (id,)).fetchall()
+            return result
+    
+    def get_task_answer(self, id):
+        with self.connection:
+            result = self.cursor.execute('SELECT answer FROM tasks WHERE id = ?', (id,)).fetchall()
             return result
         
     def get_all_task(self, number_task):
