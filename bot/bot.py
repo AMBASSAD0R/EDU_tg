@@ -39,14 +39,17 @@ async def echo_message(msg: types.Message):
             await bot.send_photo(msg.from_user.id, lst[-1])
         if lst[-2] != None:  # Если в задание есть файл - отправляем
             await bot.send_file(msg.from_user.id, lst[-2])
-    except:
+    except:  
         pass
-    if msg.text == 'Каталог заданий':
-        await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
     try:
         await bot.send_message(msg.from_user.id, lst[3])
     except:
         pass
+    
+    # Обработка клавиатуры
+    
+    if msg.text == 'Каталог заданий':
+        await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
     if msg.text == 'В начало':
         await bot.send_message(msg.from_user.id, text='Вы вернулись в меню', reply_markup=greet_kb)
     if msg.text in [i for i in range(1, 28)]:
