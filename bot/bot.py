@@ -8,7 +8,7 @@ import random
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-db = WorkDB('../database.db')
+db = WorkDB('database.db')
 
 
 @dp.message_handler(commands=['start'])
@@ -28,23 +28,23 @@ async def process_help_command(message: types.Message):
 @dp.message_handler()
 async def echo_message(msg: types.Message):
     db.update_date_use(msg.from_user.id, datetime.now())
-    try:
-        task = db.get_task(msg.text)
-        lst = [j for i in task for j in i]
-        print(lst)
-    except:
-        await bot.send_message("Приносим извинения, такого задания нет.")
-    try:
-        if lst[-1] != None:  # Если в задание есть фото - отправляем
-            await bot.send_photo(msg.from_user.id, lst[-1])
-        if lst[-2] != None:  # Если в задание есть файл - отправляем
-            await bot.send_file(msg.from_user.id, lst[-2])
-    except:
-        pass
-    try:
-        await bot.send_message(msg.from_user.id, lst[3])
-    except:
-        pass
+    #try:
+    #    task = db.get_task(msg.text)
+    #    lst = [j for i in task for j in i]
+    #    print(lst)
+    #except:
+    #    await bot.send_message("Приносим извинения, такого задания нет.")
+    #try:
+    #    if lst[-1] != None:  # Если в задание есть фото - отправляем
+    #        await bot.send_photo(msg.from_user.id, lst[-1])
+    #    if lst[-2] != None:  # Если в задание есть файл - отправляем
+    #        await bot.send_file(msg.from_user.id, lst[-2])
+    #except:
+    #    pass
+    #try:
+    #    await bot.send_message(msg.from_user.id, lst[3])
+    #except:
+    #    pass
 
     # Обработка клавиатуры
 
@@ -58,6 +58,20 @@ async def echo_message(msg: types.Message):
         id1 = random.choice(sp)
         task_id = id1[0]
         db.update_task_id(msg.from_user.id, task_id)
+        task = db.get_task(task_id)
+        lst = [j for i in task for j in i]
+        print(lst)
+        try:
+            if lst[-1] != None:  # Если в задание есть фото - отправляем
+                await bot.send_photo(msg.from_user.id, lst[-1])
+            if lst[-2] != None:  # Если в задание есть файл - отправляем
+                await bot.send_file(msg.from_user.id, lst[-2])
+        except:
+            pass
+        try:
+            await bot.send_message(msg.from_user.id, lst[3])
+        except:
+            pass
     if msg.text == 'Статистика':
         pass
 
