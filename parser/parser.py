@@ -17,7 +17,7 @@ class Parse:
         option.set_preference('media.volume_scale', '0.0')
         option.headless = True
         self.driver = webdriver.Firefox(options=option)
-        self.db = SQL('database.db')
+        self.db = SQL('../database.db')
         self.bot = telebot.TeleBot('2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA')
 
     def go_to_page(self, url):
@@ -48,7 +48,7 @@ class Parse:
             sp.append(sp1[0])
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('a')['href'].replace('../../', '')
-                path = 'data/' + url.split('/')[-1]
+                path = '../data/' + url.split('/')[-1]
                 self.get_file(url, path)
                 file_id = self.work_document('604900292', path)
                 sp.append(file_id)
@@ -56,7 +56,7 @@ class Parse:
                 print(e)
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
-                path = 'data/' + url.split('/')[-1]
+                path = '../data/' + url.split('/')[-1]
                 self.get_file(url, path)
                 file_id = self.work_photo('604900292', path)
                 sp.append(file_id)
@@ -125,11 +125,11 @@ class Parse:
     def update_db(self, sp):
         for i in sp:
             if len(i) == 5:
-                self.db.create_task(i[0], 'Информатика', i[1], i[-1], i[2], i[3])
+                self.db.create_task(i[0], 'Информатика', 2, i[1], i[-1], i[2], i[3])
             if len(i) == 4:
-                self.db.create_task(i[0], 'Информатика', i[1], i[-1], None, i[2])
+                self.db.create_task(i[0], 'Информатика', 2, i[1], i[-1], None, i[2])
             else:
-                self.db.create_task(i[0], 'Информатика', i[1], i[-1], None, None)
+                self.db.create_task(i[0], 'Информатика', 2, i[1], i[-1], None, None)
 
     def main(self):
         self.go_to_page(URL)
@@ -139,3 +139,7 @@ class Parse:
         print(res)
         self.update_db(res)
         return res
+
+
+a = Parse()
+a.main()
