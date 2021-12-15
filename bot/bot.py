@@ -17,7 +17,7 @@ db = WorkDB('../database.db')
 async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
         db.create_user(msg.from_user.id, datetime.now(), datetime.now())
-    await msg.reply("Привет!\nНапиши мне что-нибудь!", reply_markup=greet_kb)
+    await msg.reply("Привет!\nЭто бот по подготовке к ЕГЭ по информатике!", reply_markup=greet_kb)
 
 
 @dp.message_handler(commands=['help'])
