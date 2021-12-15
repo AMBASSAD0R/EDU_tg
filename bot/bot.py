@@ -33,6 +33,7 @@ async def echo_message(msg: types.Message):
         lst = [j for i in task for j in i]
         print(lst)
     except:
+        await message.reply("Приносим извинения, такого задания нет.")
         pass
     try:
         if lst[-1] != None:
