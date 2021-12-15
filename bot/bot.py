@@ -31,6 +31,7 @@ async def echo_message(msg: types.Message):
     try:
         task = db.get_task(msg.text)
         lst = [j for i in task for j in i]
+        print(lst)
     except:
         pass
     try:
@@ -41,13 +42,13 @@ async def echo_message(msg: types.Message):
     except:
         pass
     if msg.text == 'Каталог заданий':
-        await bot.send_message(msg.from_user.id, text='Rfjf', reply_markup=greet_kb1)
+        await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
     try:
-        await bot.send_message(msg.from_user.id, lst[2])
+        await bot.send_message(msg.from_user.id, lst[3])
     except:
         pass
     if msg.text == 'В начало':
-        pass
+        await bot.send_message(msg.from_user.id, text='Вы вернулись в меню', reply_markup=greet_kb)
     if msg.text in [i for i in range(1, 28)]:
         pass
     if msg.text == 'Статистика':

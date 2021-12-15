@@ -8,7 +8,7 @@ greet_kb1 = ReplyKeyboardMarkup()
 for i in range(1, 28):
     but = KeyboardButton(str(i))
     greet_kb1.add(but)
-greet_kb1.add(ReplyKeyboardMarkup('В начало'))
+greet_kb1.add(KeyboardButton('В начало'))
 
 greet_kb = ReplyKeyboardMarkup()
 greet_kb.add(KeyboardButton('Каталог заданий'))
