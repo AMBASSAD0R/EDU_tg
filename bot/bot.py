@@ -2,13 +2,13 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from db import WorkDB
-from config import TOKEN, greet_kb, greet_kb1
+from config import *
 from datetime import datetime
 import random
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-db = WorkDB('database.db')
+db = WorkDB('../database.db')
 
 
 @dp.message_handler(commands=['start'])
@@ -60,20 +60,22 @@ async def echo_message(msg: types.Message):
         except:
             pass
         try:
-            await bot.send_message(msg.from_user.id, data[3])
+            await bot.send_message(msg.from_user.id, data[3], reply_markup=kb_task)
         except:
             pass
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == \
-            db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
+            str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Правильный ответ', reply_markup=greet_kb1)
+        print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != \
-            db.get_task(db.get_task_id_user(msg.from_user.id))[4]:
+            str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Не правильный ответ', reply_markup=greet_kb1)
+        print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
 
     elif msg.text == 'Статистика':
-        await bot.send_message(msg.from_user.id, text='К сожалению эта функция ещё не готова.\nВы вернулись в меню', reply_markup=greet_kb)
+        pass
 
 
 if __name__ == '__main__':
