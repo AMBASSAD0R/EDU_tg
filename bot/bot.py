@@ -37,7 +37,7 @@ async def echo_message(msg: types.Message):
     try:
         if lst[-1] != None:  # Если в задание есть фото - отправляем
             await bot.send_photo(msg.from_user.id, lst[-1])
-        if lst[-2] != None:
+        if lst[-2] != None:  # Если в задание есть файл - отправляем
             await bot.send_file(msg.from_user.id, lst[-2])
     except:
         pass
