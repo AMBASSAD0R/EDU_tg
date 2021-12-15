@@ -10,6 +10,9 @@ for i in range(1, 28):
     greet_kb1.add(but)
 greet_kb1.add(KeyboardButton('В начало'))
 
+kb_task = ReplyKeyboardMarkup()
+kb_task.add(KeyboardButton('В начало'))
+
 greet_kb = ReplyKeyboardMarkup()
 greet_kb.add(KeyboardButton('Каталог заданий'))
 greet_kb.add(KeyboardButton('Тренировка'))
