@@ -34,7 +34,6 @@ async def echo_message(msg: types.Message):
         print(lst)
     except:
         await message.reply("Приносим извинения, такого задания нет.")
-        pass
     try:
         if lst[-1] != None:
             await bot.send_photo(msg.from_user.id, lst[-1])
