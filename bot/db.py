@@ -32,6 +32,26 @@ class WorkDB:
             return self.cursor.execute('''INSERT INTO 'user_task' (user_id, task_id)  VALUES  (?,?)''',
                                        (user_id, task_id))
 
+    def create_static(self, user_id, col_true, col_false, staicstic):
+        with self.connection:
+            return self.cursor.execute('''INSERT INTO 'user_statistic' (user_id,сol_true_answer,col_false_answer,col_resh)  VALUES  (?,?,?,?)''',
+                                       (user_id, col_true, col_false, staicstic))
+
+    def update_col_true(self, user_id, col_true):
+        with self.connection:
+            return self.cursor.execute('''UPDATE `user_statistic` SET `сol_true_answer` = ? WHERE `user_id` = ?''',
+                                       (col_true, user_id))
+
+    def update_col_false(self, user_id, col_false):
+        with self.connection:
+            return self.cursor.execute('''UPDATE `user_statistic` SET `сol_false_answer` = ? WHERE `user_id` = ?''',
+                                       (col_false, user_id))
+
+    def update_col_false(self, user_id, stat):
+        with self.connection:
+            return self.cursor.execute('''UPDATE `user_statistic` SET `col_resh` = ? WHERE `user_id` = ?''',
+                                       (stat, user_id))
+
     def close_connection(self):
         self.sqlite_connection.close()
         return True
@@ -40,8 +60,16 @@ class WorkDB:
         get_q = f'SELECT task_id FROM user_task WHERE user_id = {user_id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
-            print(str(result)[2:-3])
-            return str(result)[2:-3]
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return str(res)
+
+    def get_statistic(self, user_id):
+        get_q = f'SELECT * FROM user_statistic WHERE user_id = {user_id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            return result
 
     def get_task(self, id):
         with self.connection:

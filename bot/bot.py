@@ -16,6 +16,7 @@ async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
         db.create_user(msg.from_user.id, datetime.now(), datetime.now())
         db.add_user_in_user_task(msg.from_user.id, -100)
+        db.create_static(msg.from_user.id, 0, 0, str(['0']*27))
     await msg.reply("Привет!\nЭто бот по подготовке к ЕГЭ по информатике!\n", reply_markup=greet_kb)
 
 
@@ -68,11 +69,14 @@ async def echo_message(msg: types.Message):
             str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Правильный ответ', reply_markup=greet_kb1)
         print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
+        db.update_task_id(msg.from_user.id, -100)
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != \
             str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
-        await bot.send_message(msg.from_user.id, text='Не правильный ответ', reply_markup=greet_kb1)
-        print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
+        await bot.send_message(msg.from_user.id, text='Не правильный ответ')
+        #print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
+        print(db.get_statistic(msg.from_user.id))
+        #db.update_col_false(msg.from_user.id, )
 
     elif msg.text == 'Статистика':
         pass
