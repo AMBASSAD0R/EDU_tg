@@ -17,7 +17,7 @@ class Parse:
         option.set_preference('media.volume_scale', '0.0')
         option.headless = True
         self.driver = webdriver.Firefox(options=option)
-        self.db = SQL('../data/database.db')
+        self.db = SQL('C:/Users/zuiko/Desktop/EDU_tg/database.db')
         self.bot = telebot.TeleBot('2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA')
 
     def go_to_page(self, url):
@@ -122,22 +122,24 @@ class Parse:
     def check_task_in_bd(self, id):
         return self.db.check_tasks(id)
 
-    def update_db(self, sp):
+    def update_db(self, num, sp):
         for i in sp:
+            print(i)
             if len(i) == 5:
-                self.db.create_task(i[0], 'Информатика', 2, i[1], i[-1], i[2], i[3])
+                self.db.create_task(int(i[0]), 'Информатика', num, i[1], i[-1], i[2], i[3])
             if len(i) == 4:
-                self.db.create_task(i[0], 'Информатика', 2, i[1], i[-1], None, i[2])
+                self.db.create_task(int(i[0]), 'Информатика', num, i[1], i[-1], None, i[2])
             else:
-                self.db.create_task(i[0], 'Информатика', 2, i[1], i[-1], None, None)
+                self.db.create_task(int(i[0]), 'Информатика', num, i[1], i[-1], None, None)
 
     def main(self):
-        self.go_to_page(URL)
-        html = self.get_html_selenium()
-        self.driver_close()
-        res = self.get_td(html)
-        print(res)
-        self.update_db(res)
+        for i in URL:
+            self.go_to_page(i[1])
+            html = self.get_html_selenium()
+            #self.driver_close()
+            res = self.get_td(html)
+            print(res)
+            self.update_db(i[0], res)
         return res
 
 
