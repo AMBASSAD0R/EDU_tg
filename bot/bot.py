@@ -54,9 +54,9 @@ async def echo_message(msg: types.Message):
         data = [j for i in task for j in i]
         print(data)
         try:
-            if data[-1]:  # Если в задание есть фото - отправляем
+            if data[-4]:  # Если в задание есть фото - отправляем
                 await bot.send_photo(msg.from_user.id, data[-4])
-            if data[-2]:  # Если в задание есть файл - отправляем
+            if data[-5]:  # Если в задание есть файл - отправляем
                 await bot.send_document(msg.from_user.id, data[-5])
         except:
             pass
@@ -67,13 +67,13 @@ async def echo_message(msg: types.Message):
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == \
             str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
-        await bot.send_message(msg.from_user.id, text='Правильный ответ', reply_markup=greet_kb1)
+        await bot.send_message(msg.from_user.id, text='Правильный ответ ✅', reply_markup=greet_kb1)
         print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
         db.update_task_id(msg.from_user.id, -100)
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != \
             str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
-        await bot.send_message(msg.from_user.id, text='Неправильный ответ')
+        await bot.send_message(msg.from_user.id, text='Неправильный ответ ❌')
         # print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
         print(db.get_statistic(msg.from_user.id))
         # db.update_col_false(msg.from_user.id, )
