@@ -48,25 +48,27 @@ class Parse:
             sp.append(sp1[0])
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('a')['href'].replace('../../', '')
-                print(url)
+                #print(url)
                 path = 'data/' + url.split('/')[-1]
                 self.get_file(url, path)
                 file_id = self.work_document('604900292', path)
                 sp.append(file_id)
             except Exception as e:
-                print(e)
+                #print(e)
+                pass
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
-                print(url)
+                #print(url)
                 path = 'data/' + url.split('/')[-1]
                 self.get_file(url, path)
                 file_id = self.work_photo('604900292', path)
                 sp.append(file_id)
             except Exception as e:
-                print(e)
+                #print(e)
+                pass
             
             sp.append(self.work_text_answer(items2[i].text))
-            print(sp)
+            #print(sp)
             res.append(sp)
         return res
 
@@ -109,11 +111,12 @@ class Parse:
         try:
             photo = self.bot.send_photo(chat_id, open(f'{path}', 'rb'))
             file_id = photo.photo[0].file_id
-            print(file_id)
+            #print(file_id)
             #time.sleep(1)
             return file_id
         except Exception as e:
-            print(e)
+            #print(e)
+            pass
 
     def work_document(self, chat_id, path):
         try:
@@ -139,12 +142,14 @@ class Parse:
 
     def main(self):
         for i in URL:
+            print(f'Получаем данные о {i[0]} задание')
             self.go_to_page(i[1])
             html = self.get_html_selenium()
             #self.driver_close()
             res = self.get_td(html)
-            print(res)
+            #print(res)
             self.update_db(i[0], res)
+            print(f'Завершено получение данных о {i[0]} задание')
         return res
 
 

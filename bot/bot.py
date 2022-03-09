@@ -65,16 +65,24 @@ async def echo_message(msg: types.Message):
         except:
             pass
 
-    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == \
-            str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
+    elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Правильный ответ ✅', reply_markup=greet_kb1)
-        print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
+        task_id =db.get_task_id_user(msg.from_user.id)
+        db.update_task_num_attempts(task_id)
+        db.update_task_rights_solves(task_id)
+        db.update_task_rating(task_id)
+        db.update_task_сol_true_answer(msg.from_user.id)
+        print(db.get_task_answer(task_id)[0][0])
         db.update_task_id(msg.from_user.id, -100)
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != \
             str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Неправильный ответ ❌')
         # print(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0])
+        task_id = db.get_task_id_user(msg.from_user.id)
+        db.update_task_num_attempts(task_id)
+        db.update_task_rating(task_id)
+        db.update_task_col_false_answer(msg.from_user.id)
         print(db.get_statistic(msg.from_user.id))
         # db.update_col_false(msg.from_user.id, )
 
