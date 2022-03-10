@@ -48,7 +48,7 @@ class WorkDB:
             return self.cursor.execute('''UPDATE `user_statistic` SET `сol_false_answer` = ? WHERE `user_id` = ?''',
                                        (col_false, user_id))
 
-    def update_col_false(self, user_id, stat):
+    def update_col_resh(self, user_id, stat):
         with self.connection:
             return self.cursor.execute('''UPDATE `user_statistic` SET `col_resh` = ? WHERE `user_id` = ?''',
                                        (stat, user_id))
@@ -151,8 +151,6 @@ class WorkDB:
         get_q = f'SELECT col_false_answer FROM user_statistic WHERE user_id = {user_id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
-            print('1111111111111111111111111111111111111111111111111111111111111111')
-            print(result)
             res = str(result[0])[1:]
             res = res[:-2]
             print(res)
@@ -161,17 +159,43 @@ class WorkDB:
     def update_task_сol_true_answer(self, user_id):
         with self.connection:
             сol_true_answer = self.get_task_сol_true_answer(user_id) + 1
-            return self.cursor.execute('''UPDATE `tasks` SET `сol_true_answer` = ? WHERE `user_id` = ?''',
+            return self.cursor.execute('''UPDATE `user_statistic` SET `сol_true_answer` = ? WHERE `user_id` = ?''',
                                        (сol_true_answer, user_id))
     
     def update_task_col_false_answer(self, user_id):
         with self.connection:
             col_false_answer = self.get_task_col_false_answer(user_id) + 1
-            return self.cursor.execute('''UPDATE `tasks` SET `col_false_answer` = ? WHERE `user_id` = ?''',
+            return self.cursor.execute('''UPDATE `user_statistic` SET `col_false_answer` = ? WHERE `user_id` = ?''',
                                        (col_false_answer, user_id))
 
-    def update_task_col_resh(self, user_id):
+    def update_task_col_resh(self, user_id, col_resh):
         with self.connection:
-            col_resh = ''
-            return self.cursor.execute('''UPDATE `tasks` SET `col_resh` = ? WHERE `user_id` = ?''',
+            return self.cursor.execute('''UPDATE `user_statistic` SET `col_resh` = ? WHERE `user_id` = ?''',
                                        (col_resh, user_id))
+
+    def get_task_rating(self, id):
+        get_q = f'SELECT rating FROM tasks WHERE id = {id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return int(res)
+
+    def get_task_col_resh(self, user_id):
+        get_q = f'SELECT col_resh FROM user_statistic WHERE user_id = {user_id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return res
+
+    def get_task_number_id(self, id):
+        get_q = f'SELECT number_task FROM tasks WHERE id = {id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return int(res)

@@ -11,6 +11,7 @@ dp = Dispatcher(bot)
 db = WorkDB('database.db')
 
 
+
 @dp.message_handler(commands=['start'])
 async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
@@ -34,6 +35,17 @@ async def echo_message(msg: types.Message):
 
     if msg.text == 'Каталог заданий':
         await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
+    elif msg.text == 'Статистика':
+        username = msg.from_user.username
+        col_resh1 = db.get_task_col_resh(msg.from_user.id)[3:-3].split("', '")
+        col_resh2 = []
+        for j, i in enumerate(col_resh1):
+            col_resh2.append(f'Количевство решения №{j+1}: {i}')
+        text1 = '\n'.join(col_resh2)
+        await bot.send_message(msg.from_user.id, text=f'{username}')
+        await bot.send_message(msg.from_user.id, text=f'Процент решения задач: {text1}')
+        await bot.send_message(msg.from_user.id, text=f'Процент решения задач: {int(db.get_task_сol_true_answer(msg.from_user.id) / (db.get_task_сol_true_answer(msg.from_user.id) + db.get_task_col_false_answer(msg.from_user.id)) * 100)}')
+
 
     elif msg.text == 'В начало':
         await bot.send_message(msg.from_user.id, text='Вы вернулись в меню', reply_markup=greet_kb)
@@ -50,8 +62,8 @@ async def echo_message(msg: types.Message):
 
         db.update_task_id(msg.from_user.id, task_id)
         task = db.get_task(task_id)
-
         data = [j for i in task for j in i]
+        rating = data[-1]
         print(data)
         try:
             if data[-4]:  # Если в задание есть фото - отправляем
@@ -64,15 +76,20 @@ async def echo_message(msg: types.Message):
             await bot.send_message(msg.from_user.id, data[3], reply_markup=kb_task)
         except:
             pass
-
+        await bot.send_message(msg.from_user.id, f'Процент решаемости задачи: {rating}%', reply_markup=kb_task)
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == str(db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Правильный ответ ✅', reply_markup=greet_kb1)
-        task_id =db.get_task_id_user(msg.from_user.id)
+        task_id = db.get_task_id_user(msg.from_user.id)
         db.update_task_num_attempts(task_id)
         db.update_task_rights_solves(task_id)
         db.update_task_rating(task_id)
         db.update_task_сol_true_answer(msg.from_user.id)
         print(db.get_task_answer(task_id)[0][0])
+        col_resh = list(map(int, db.get_task_col_resh(msg.from_user.id)[3:-3].split("', '")))
+        number_id = db.get_task_number_id(task_id)
+        col_resh[number_id - 1] += 1
+        print(col_resh)
+        db.update_task_col_resh(msg.from_user.id, str(list(map(str, col_resh))))
         db.update_task_id(msg.from_user.id, -100)
 
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text != \
@@ -86,9 +103,7 @@ async def echo_message(msg: types.Message):
         print(db.get_statistic(msg.from_user.id))
         # db.update_col_false(msg.from_user.id, )
 
-    elif msg.text == 'Статистика':
-        pass
-
+    
 
 if __name__ == '__main__':
     executor.start_polling(dp)
