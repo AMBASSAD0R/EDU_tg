@@ -17,7 +17,7 @@ class Parse:
         option.set_preference('media.volume_scale', '0.0')
         option.headless = True
         self.driver = webdriver.Firefox(options=option)
-        self.db = SQL('C:/EDU_tg/database.db')
+        self.db = SQL('C:/Users/User/PycharmProjects/EDU_tg/database.db')
         self.bot = telebot.TeleBot('2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA')
 
     def go_to_page(self, url):
@@ -48,24 +48,22 @@ class Parse:
             sp.append(sp1[0])
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('a')['href'].replace('../../', '')
-                #print(url)
+                print(url)
                 path = 'data/' + url.split('/')[-1]
-                self.get_file(url, path)
-                file_id = self.work_document('604900292', path)
-                sp.append(file_id)
+                #self.get_file(url, path)
+                #file_id = self.work_document('604900292', path)
+                sp.append(url)
             except Exception as e:
-                #print(e)
-                pass
+                print(e)
             try:
                 url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
                 #print(url)
-                path = 'data/' + url.split('/')[-1]
+                path = '../data/' + url.split('/')[-1]
                 self.get_file(url, path)
                 file_id = self.work_photo('604900292', path)
                 sp.append(file_id)
             except Exception as e:
-                #print(e)
-                pass
+                print(e)
             
             sp.append(self.work_text_answer(items2[i].text))
             #print(sp)
@@ -109,14 +107,14 @@ class Parse:
 
     def work_photo(self, chat_id, path):
         try:
+            print(path)
             photo = self.bot.send_photo(chat_id, open(f'{path}', 'rb'))
             file_id = photo.photo[0].file_id
-            #print(file_id)
+            print(file_id)
             #time.sleep(1)
             return file_id
         except Exception as e:
-            #print(e)
-            pass
+            print(e)
 
     def work_document(self, chat_id, path):
         try:
@@ -134,7 +132,7 @@ class Parse:
         for i in sp:
             print(i)
             if len(i) == 5:
-                self.db.create_task(int(i[0]), 'Информатика', num, i[1], i[-1], i[-2], i[3])
+                self.db.create_task(int(i[0]), 'Информатика', num, i[1], i[-1], i[-3], i[3])
             if len(i) == 4:
                 self.db.create_task(int(i[0]), 'Информатика', num, i[1], i[-1], None, i[-2])
             else:

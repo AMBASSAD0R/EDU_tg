@@ -1,6 +1,4 @@
-URL = [[1, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=1&cat12=on&cat13=on'], 
-       [2, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=2&cat8=on'], 
-       [3, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=3&cat169=on'], 
+URL = [[3, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=3&cat169=on'],
        [4, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=4&cat21=on&cat22=on&cat23=on&cat25=on&cat166=on'], 
        [5, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=5&cat27=on&cat28=on&cat144=on'], 
        [6, 'https://kpolyakov.spb.ru/school/ege/gen.php?action=viewAllEgeNo&egeId=6&cat37=on&cat91=on'], 

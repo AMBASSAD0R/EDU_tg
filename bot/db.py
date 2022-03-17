@@ -12,6 +12,20 @@ class WorkDB:
             return self.cursor.execute('''INSERT INTO 'users' (user_id, date_reg, date_last_use)  VALUES  (?,?,?)''',
                                        (user_id, data_reg, date_last_use))
 
+    def create_user_train(self, user_id, tasks_id):
+        with self.connection:
+            return self.cursor.execute('''INSERT INTO 'user_train' (user_id, tasks_id)  VALUES  (?,?)''',
+                                       (user_id, tasks_id))
+
+    def get_users_train(self, user_id):
+        get_q = f'SELECT tasks_id FROM users_train WHERE user_id = {user_id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return str(res)
+
     def check_user(self, user_id):
         """Проверяем, есть ли уже юзер в базе"""
         with self.connection:
@@ -37,6 +51,11 @@ class WorkDB:
         with self.connection:
             return self.cursor.execute('''INSERT INTO 'user_statistic' (user_id,сol_true_answer,col_false_answer,col_resh)  VALUES  (?,?,?,?)''',
                                        (user_id, col_true, col_false, staicstic))
+
+    def get_rating_diapason(self, min_d, max_d):
+        with self.connection:
+            result = self.cursor.execute(f'SELECT * FROM tasks WHERE rating BETWEEN {min_d} AND {max_d}').fetchall()
+            return result
 
     def update_col_true(self, user_id, col_true):
         with self.connection:
