@@ -18,13 +18,18 @@ class WorkDB:
                                        (user_id, tasks_id))
 
     def get_users_train(self, user_id):
-        get_q = f'SELECT tasks_id FROM users_train WHERE user_id = {user_id};'
+        get_q = f'SELECT tasks_id FROM user_train WHERE user_id = {user_id};'
         with self.connection:
             result = self.cursor.execute(get_q).fetchall()
             res = str(result[0])[1:]
             res = res[:-2]
             print(res)
             return str(res)
+
+    def update_tasks_id(self, user_id, tasks_id):
+        with self.connection:
+            return self.cursor.execute('''UPDATE `user_train` SET `tasks_id` = ? WHERE `user_id` = ?''',
+                                       (str(tasks_id), user_id))
 
     def check_user(self, user_id):
         """Проверяем, есть ли уже юзер в базе"""
