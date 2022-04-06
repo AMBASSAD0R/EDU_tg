@@ -17,6 +17,7 @@ greet_kb = ReplyKeyboardMarkup()
 greet_kb.add(KeyboardButton('Каталог заданий'))
 greet_kb.add(KeyboardButton('Тренировка'))
 greet_kb.add(KeyboardButton('Статистика'))
+greet_kb.add(KeyboardButton('Рейтинг пользователей'))
 
 greet_kb2 = ReplyKeyboardMarkup()
 greet_kb2.add(ReplyKeyboardMarkup('Интенсив'))

@@ -26,6 +26,16 @@ class WorkDB:
             print(res)
             return str(res)
 
+    def get_username(self, user_id):
+        get_q = f'SELECT username FROM users WHERE user_id = {user_id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return str(res)
+
+
     def update_tasks_id(self, user_id, tasks_id):
         with self.connection:
             return self.cursor.execute('''UPDATE `user_train` SET `tasks_id` = ? WHERE `user_id` = ?''',
@@ -197,7 +207,7 @@ class WorkDB:
 
     def update_user_rating(self, user_id, rating_Add):
         with self.connection:
-            rating = self.get_user_rating(user_id) + rating_Add
+            rating = self.get_user_rating(user_id) + (101 - rating_Add)
             return self.cursor.execute('''UPDATE `user_statistic` SET `rating` = ? WHERE `user_id` = ?''',
                                        (rating, user_id))
     

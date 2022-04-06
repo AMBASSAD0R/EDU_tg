@@ -17,7 +17,7 @@ class Parse:
         option.set_preference('media.volume_scale', '0.0')
         option.headless = True
         self.driver = webdriver.Firefox(options=option)
-        self.db = SQL('C:/Users/User/PycharmProjects/EDU_tg/database.db')
+        self.db = SQL('database.db')
         self.bot = telebot.TeleBot('2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA')
 
     def go_to_page(self, url):
@@ -43,28 +43,28 @@ class Parse:
         res = []
         for i in range(len(task)):
             sp = []
-            sp1 = self.work_text_task(task[i].replace('<br>', '\n').text)
+            sp1 = self.work_text_task(task[i].text)
             sp.append(sp1[1])
             sp.append(sp1[0])
             try:
                 url = 'https://kpolyakov.spb.ru/' + task[i].find('a')['href'].replace('../../', '')
                 print(url)
                 path = 'data/' + url.split('/')[-1]
-                #self.get_file(url, path)
-                #file_id = self.work_document('604900292', path)
-                sp.append(url)
+                self.get_file(url, path)
+                file_id = self.work_document('604900292', path)
+                sp.append(file_id)
             except Exception as e:
                 print(e)
             try:
                 url = 'https://kpolyakov.spb.ru/' + task[i].find('img')['src'].replace('../../', '')
                 #print(url)
-                path = '../data/' + url.split('/')[-1]
+                path = 'data/' + url.split('/')[-1]
                 self.get_file(url, path)
                 file_id = self.work_photo('604900292', path)
                 sp.append(file_id)
             except Exception as e:
                 print(e)
-            if number_task in ['26', '27']:
+            if str(number_task) in ['27']:
                 sp.append(self.work_text_answer(answer[i].text).split()[0])
             else:
                 sp.append(self.work_text_answer(answer[i].text))

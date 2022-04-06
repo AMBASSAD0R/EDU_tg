@@ -8,31 +8,11 @@ import random
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 import matplotlib.pyplot as plt
 
-TOKEN = '2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA'
 
-greet_kb1 = ReplyKeyboardMarkup()
-for i in range(1, 28):
-    but = KeyboardButton('№' + str(i))
-    greet_kb1.add(but)
-greet_kb1.add(KeyboardButton('В начало'))
-
-kb_task = ReplyKeyboardMarkup()
-kb_task.add(KeyboardButton('В начало'))
-
-greet_kb = ReplyKeyboardMarkup()
-greet_kb.add(KeyboardButton('Каталог заданий'))
-greet_kb.add(KeyboardButton('Тренировка'))
-greet_kb.add(KeyboardButton('Статистика'))
-greet_kb.add(KeyboardButton('Рейтинг пользователей'))
-
-greet_kb2 = ReplyKeyboardMarkup()
-greet_kb2.add(ReplyKeyboardMarkup('Интенсив'))
-greet_kb2.add(ReplyKeyboardMarkup('Задача дня'))
-greet_kb2.add(ReplyKeyboardMarkup('В начало'))
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-db = WorkDB('../database.db')
+db = WorkDB('database.db')
 
 
 def get_user_rating(user_id):
@@ -67,9 +47,18 @@ async def process_help_command(message: types.Message):
 @dp.message_handler()
 async def echo_message(msg: types.Message):
     #db.update_date_use(msg.from_user.id, datetime.now())
-    if len(list(map(int, db.get_users_train(msg.from_user.id)[2:-2].split(', ')))) == 0:
+    try:
+        if len(list(map(int, db.get_users_train(msg.from_user.id)[2:-2].split(', ')))) == 0:
+            user_rating = get_user_rating(msg.from_user.id)
+            suitable_tasks = db.get_rating_diapason(100 - user_rating - 20, 100 -user_rating + 20)
+            id_suitable_tasks = []
+            for task in suitable_tasks:
+                id_suitable_tasks.append(list(task)[0])
+            random.shuffle(id_suitable_tasks)
+            db.update_tasks_id(msg.from_user.id, f'{id_suitable_tasks[:5]}')
+    except:
         user_rating = get_user_rating(msg.from_user.id)
-        suitable_tasks = db.get_rating_diapason(user_rating - 20, user_rating + 20)
+        suitable_tasks = db.get_rating_diapason(100 - user_rating - 20, 100 -user_rating + 20)
         id_suitable_tasks = []
         for task in suitable_tasks:
             id_suitable_tasks.append(list(task)[0])
@@ -82,7 +71,13 @@ async def echo_message(msg: types.Message):
     elif msg.text == 'Рейтинг пользователей':
         users_raiting = db.get_top_rating()
         users_raiting.sort(key=lambda x: x[1])
-        # ОТСР
+        print(users_raiting)
+        sp = []
+        print()
+        for j, i in enumerate(users_raiting[::-1][:11]):
+            sp.append(f'#{j+1} {db.get_username(i[0])[1:-1]} : {i[1]}')
+        t = "\n".join(sp)
+        await bot.send_message(msg.from_user.id, text=f'{t}', reply_markup=kb_task)
 
     elif msg.text == 'Статистика':
         username = msg.from_user.username
@@ -132,7 +127,7 @@ async def echo_message(msg: types.Message):
         rating = data[-1]
         print('s')
         print(data)
-        if data[2] == 10 or data[2] == 9:
+        if data[2] == 10 or data[2] == 9 or data[2] == 26 or data[2] == 27:
             print('хуй')
             try:
                 if data[-4]:  # Если в задание есть фото - отправляем
