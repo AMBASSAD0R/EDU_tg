@@ -7,10 +7,10 @@ class WorkDB:
         self.connection = sqlite3.connect(path_db)
         self.cursor = self.connection.cursor()
 
-    def create_user(self, user_id, data_reg, date_last_use):
+    def create_user(self, user_id, username):
         with self.connection:
-            return self.cursor.execute('''INSERT INTO 'users' (user_id, date_reg, date_last_use)  VALUES  (?,?,?)''',
-                                       (user_id, data_reg, date_last_use))
+            return self.cursor.execute('''INSERT INTO 'users' (user_id, username)  VALUES  (?,?)''',
+                                       (user_id, username))
 
     def create_user_train(self, user_id, tasks_id):
         with self.connection:
@@ -52,10 +52,10 @@ class WorkDB:
             return self.cursor.execute('''INSERT INTO 'user_task' (user_id, task_id)  VALUES  (?,?)''',
                                        (user_id, task_id))
 
-    def create_static(self, user_id, col_true, col_false, staicstic):
+    def create_static(self, user_id, col_true, col_false, staicstic, rating):
         with self.connection:
-            return self.cursor.execute('''INSERT INTO 'user_statistic' (user_id,сol_true_answer,col_false_answer,col_resh)  VALUES  (?,?,?,?)''',
-                                       (user_id, col_true, col_false, staicstic))
+            return self.cursor.execute('''INSERT INTO 'user_statistic' (user_id,сol_true_answer,col_false_answer,col_resh, rating)  VALUES  (?,?,?,?,?)''',
+                                       (user_id, col_true, col_false, staicstic, rating))
 
     def get_rating_diapason(self, min_d, max_d):
         with self.connection:
@@ -171,6 +171,15 @@ class WorkDB:
             print(res)
             return int(res)
 
+    def get_user_rating(self, user_id):
+        get_q = f'SELECT rating FROM user_statistic WHERE user_id = {user_id};'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            res = str(result[0])[1:]
+            res = res[:-2]
+            print(res)
+            return int(res)
+
     def get_task_col_false_answer(self, user_id):
         get_q = f'SELECT col_false_answer FROM user_statistic WHERE user_id = {user_id};'
         with self.connection:
@@ -185,6 +194,12 @@ class WorkDB:
             сol_true_answer = self.get_task_сol_true_answer(user_id) + 1
             return self.cursor.execute('''UPDATE `user_statistic` SET `сol_true_answer` = ? WHERE `user_id` = ?''',
                                        (сol_true_answer, user_id))
+
+    def update_user_rating(self, user_id, rating_Add):
+        with self.connection:
+            rating = self.get_user_rating(user_id) + rating_Add
+            return self.cursor.execute('''UPDATE `user_statistic` SET `rating` = ? WHERE `user_id` = ?''',
+                                       (rating, user_id))
     
     def update_task_col_false_answer(self, user_id):
         with self.connection:
@@ -205,6 +220,16 @@ class WorkDB:
             res = res[:-2]
             print(res)
             return int(res)
+
+    def get_top_rating(self):
+        get_q = f'SELECT * FROM user_statistic;'
+        with self.connection:
+            result = self.cursor.execute(get_q).fetchall()
+            all_users = []
+            for item in result:
+                all_users.append([item[0], item[-1]])
+
+            return all_users
 
     def get_task_col_resh(self, user_id):
         get_q = f'SELECT col_resh FROM user_statistic WHERE user_id = {user_id};'

@@ -36,18 +36,18 @@ class Parse:
         response = requests.get(url, headers=HEADERS)
         return response.content
 
-    def get_td(self, html):
+    def get_td(self, html, number_task):
         soup = BeautifulSoup(html, 'html.parser')
-        items = soup.findAll('td', class_='topicview')
-        items2 = soup.findAll('td', class_='answer')
+        task = soup.findAll('td', class_='topicview')
+        answer = soup.findAll('td', class_='answer')
         res = []
-        for i in range(len(items)):
+        for i in range(len(task)):
             sp = []
-            sp1 = self.work_text_task(items[i].text)
+            sp1 = self.work_text_task(task[i].replace('<br>', '\n').text)
             sp.append(sp1[1])
             sp.append(sp1[0])
             try:
-                url = 'https://kpolyakov.spb.ru/' + items[i].find('a')['href'].replace('../../', '')
+                url = 'https://kpolyakov.spb.ru/' + task[i].find('a')['href'].replace('../../', '')
                 print(url)
                 path = 'data/' + url.split('/')[-1]
                 #self.get_file(url, path)
@@ -56,7 +56,7 @@ class Parse:
             except Exception as e:
                 print(e)
             try:
-                url = 'https://kpolyakov.spb.ru/' + items[i].find('img')['src'].replace('../../', '')
+                url = 'https://kpolyakov.spb.ru/' + task[i].find('img')['src'].replace('../../', '')
                 #print(url)
                 path = '../data/' + url.split('/')[-1]
                 self.get_file(url, path)
@@ -64,8 +64,10 @@ class Parse:
                 sp.append(file_id)
             except Exception as e:
                 print(e)
-            
-            sp.append(self.work_text_answer(items2[i].text))
+            if number_task in ['26', '27']:
+                sp.append(self.work_text_answer(answer[i].text).split()[0])
+            else:
+                sp.append(self.work_text_answer(answer[i].text))
             #print(sp)
             res.append(sp)
         return res
@@ -144,7 +146,7 @@ class Parse:
             self.go_to_page(i[1])
             html = self.get_html_selenium()
             #self.driver_close()
-            res = self.get_td(html)
+            res = self.get_td(html, str(i[0]))
             #print(res)
             self.update_db(i[0], res)
             print(f'Завершено получение данных о {i[0]} задание')

@@ -1,14 +1,38 @@
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-from db import WorkDB
 from config import *
+from db import WorkDB
 from datetime import datetime
 import random
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+import matplotlib.pyplot as plt
+
+TOKEN = '2104313952:AAFb6dtxWE8d2vFdEi1k2ZYg81xwNCMz_gA'
+
+greet_kb1 = ReplyKeyboardMarkup()
+for i in range(1, 28):
+    but = KeyboardButton('№' + str(i))
+    greet_kb1.add(but)
+greet_kb1.add(KeyboardButton('В начало'))
+
+kb_task = ReplyKeyboardMarkup()
+kb_task.add(KeyboardButton('В начало'))
+
+greet_kb = ReplyKeyboardMarkup()
+greet_kb.add(KeyboardButton('Каталог заданий'))
+greet_kb.add(KeyboardButton('Тренировка'))
+greet_kb.add(KeyboardButton('Статистика'))
+greet_kb.add(KeyboardButton('Рейтинг пользователей'))
+
+greet_kb2 = ReplyKeyboardMarkup()
+greet_kb2.add(ReplyKeyboardMarkup('Интенсив'))
+greet_kb2.add(ReplyKeyboardMarkup('Задача дня'))
+greet_kb2.add(ReplyKeyboardMarkup('В начало'))
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
-db = WorkDB('database.db')
+db = WorkDB('../database.db')
 
 
 def get_user_rating(user_id):
@@ -22,9 +46,9 @@ def get_user_rating(user_id):
 @dp.message_handler(commands=['start'])
 async def process_start_command(msg: types.Message):
     if not db.check_user(msg.from_user.id):
-        db.create_user(msg.from_user.id, datetime.now(), datetime.now())
+        db.create_user(msg.from_user.id, msg.from_user.username)
         db.add_user_in_user_task(msg.from_user.id, -100)
-        db.create_static(msg.from_user.id, 0, 0, str(['0'] * 27))
+        db.create_static(msg.from_user.id, 0, 0, str(['0'] * 27), 0)
         suitable_tasks = db.get_rating_diapason(0, 20)
         id_suitable_tasks = []
         for task in suitable_tasks:
@@ -42,7 +66,7 @@ async def process_help_command(message: types.Message):
 
 @dp.message_handler()
 async def echo_message(msg: types.Message):
-    db.update_date_use(msg.from_user.id, datetime.now())
+    #db.update_date_use(msg.from_user.id, datetime.now())
     if len(list(map(int, db.get_users_train(msg.from_user.id)[2:-2].split(', ')))) == 0:
         user_rating = get_user_rating(msg.from_user.id)
         suitable_tasks = db.get_rating_diapason(user_rating - 20, user_rating + 20)
@@ -55,30 +79,49 @@ async def echo_message(msg: types.Message):
 
     if msg.text == 'Каталог заданий':
         await bot.send_message(msg.from_user.id, text='Вы попали в каталог задач', reply_markup=greet_kb1)
+    elif msg.text == 'Рейтинг пользователей':
+        users_raiting = db.get_top_rating()
+        users_raiting.sort(key=lambda x: x[1])
+        # ОТСР
+
     elif msg.text == 'Статистика':
         username = msg.from_user.username
-        col_resh1 = db.get_task_col_resh(msg.from_user.id)[3:-3].split("', '")
+        col_resh1 = list(map(int, db.get_task_col_resh(msg.from_user.id)[3:-3].split("', '")))
         col_resh2 = []
-        for j, i in enumerate(col_resh1):
-            col_resh2.append(f'Количевство решения №{j + 1}: {i}')
-        text1 = '\n'.join(col_resh2)
-        await bot.send_message(msg.from_user.id, text=f'{username}')
-        await bot.send_message(msg.from_user.id, text=f'Процент решения задач: {text1}')
+        for i in range(len(col_resh1)):
+            col_resh2.append(f' {int(i) + 1} ')
+        # await bot.send_message(msg.from_user.id, text=f'{username}')
+        # await bot.send_message(msg.from_user.id, text=f'Процент решения задач: {text1}')
+        plt.bar(col_resh2, col_resh1)
+        print(col_resh1)
+        print(col_resh2)
+        plt.savefig(f'{msg.from_user.id}.jpg')
+        await bot.send_photo(msg.from_user.id, open(f'{msg.from_user.id}.jpg', 'rb'))
         try:
-            await bot.send_message(msg.from_user.id,
-                                   text=f'Процент решения задач: {int(db.get_task_сol_true_answer(msg.from_user.id) / (db.get_task_сol_true_answer(msg.from_user.id) + db.get_task_col_false_answer(msg.from_user.id)) * 100)}')
+            percent = int(db.get_task_сol_true_answer(msg.from_user.id) / (
+                    db.get_task_сol_true_answer(msg.from_user.id) + db.get_task_col_false_answer(
+                msg.from_user.id)) * 100)
+            if percent < 50:
+                await bot.send_message(msg.from_user.id,
+                                   text=f'Процент решения задач: {percent}% 🆘‼')
+            elif 50 <= percent < 80:
+                await bot.send_message(msg.from_user.id,
+                                       text=f'Процент решения задач: {percent}% ☣')
+            elif 80 <= percent:
+                await bot.send_message(msg.from_user.id,
+                                       text=f'Процент решения задач: {percent}% 💯')
         except:
             await bot.send_message(msg.from_user.id,
-                                   text=f'Процент решения задач: 0%')
+                                   text=f'Процент решения задач: 0% 🆘‼')
 
     elif msg.text == 'Тренировка':
-        #user_rating = get_user_rating(msg.from_user.id)
-        #suitable_tasks = db.get_rating_diapason(user_rating - 20, user_rating + 20)
-        #id_suitable_tasks = []
-        #for task in suitable_tasks:
+        # user_rating = get_user_rating(msg.from_user.id)
+        # suitable_tasks = db.get_rating_diapason(user_rating - 20, user_rating + 20)
+        # id_suitable_tasks = []
+        # for task in suitable_tasks:
         #    id_suitable_tasks.append(list(task)[0])
-        #task_id = id_suitable_tasks[0]
-        #print(db.get_users_train(msg.from_user.id))
+        # task_id = id_suitable_tasks[0]
+        # print(db.get_users_train(msg.from_user.id))
         sp = list(map(int, db.get_users_train(msg.from_user.id)[2:-2].split(', ')))
         print(sp)
         task_id = random.choice(sp)
@@ -87,14 +130,23 @@ async def echo_message(msg: types.Message):
         data = [j for i in task for j in i]
         print(data)
         rating = data[-1]
+        print('s')
         print(data)
-        try:
-            if data[-4]:  # Если в задание есть фото - отправляем
-                await bot.send_photo(msg.from_user.id, data[-4])
-            if data[-5]:  # Если в задание есть файл - отправляем
-                await bot.send_message(msg.from_user.id, data[-5])
-        except Exception as e:
-            print(e)
+        if data[2] == 10 or data[2] == 9:
+            print('хуй')
+            try:
+                if data[-4]:  # Если в задание есть фото - отправляем
+                    await bot.send_document(msg.from_user.id, data[-4])
+            except Exception as e:
+                print(e)
+        else:
+            try:
+                if data[-4]:  # Если в задание есть фото - отправляем
+                    await bot.send_photo(msg.from_user.id, data[-4])
+                if data[-5]:  # Если в задание есть файл - отправляем
+                    await bot.send_message(msg.from_user.id, data[-5])
+            except Exception as e:
+                print(e)
         try:
             await bot.send_message(msg.from_user.id, data[3], reply_markup=kb_task)
         except:
@@ -121,13 +173,21 @@ async def echo_message(msg: types.Message):
         data = [j for i in task for j in i]
         rating = data[-1]
         print(data)
-        try:
-            if data[-4]:  # Если в задание есть фото - отправляем
-                await bot.send_photo(msg.from_user.id, data[-4])
-            if data[-5]:  # Если в задание есть файл - отправляем
-                await bot.send_message(msg.from_user.id, data[-5])
-        except Exception as e:
-            print(e)
+        if data[2] == 10 or data[2] == 9:
+            print('хуй')
+            try:
+                if data[-4]:  # Если в задание есть фото - отправляем
+                    await bot.send_document(msg.from_user.id, data[-4], caption='')
+            except Exception as e:
+                print(e)
+        else:
+            try:
+                if data[-4]:  # Если в задание есть фото - отправляем
+                    await bot.send_photo(msg.from_user.id, data[-4])
+                if data[-5]:  # Если в задание есть файл - отправляем
+                    await bot.send_message(msg.from_user.id, data[-5])
+            except Exception as e:
+                print(e)
         try:
             await bot.send_message(msg.from_user.id, data[3], reply_markup=kb_task)
         except:
@@ -136,6 +196,7 @@ async def echo_message(msg: types.Message):
     elif db.get_task_id_user(msg.from_user.id) != -100 and msg.text == str(
             db.get_task_answer(db.get_task_id_user(msg.from_user.id))[0][0]):
         await bot.send_message(msg.from_user.id, text='Правильный ответ ✅', reply_markup=greet_kb1)
+        db.update_user_rating(msg.from_user.id, db.get_task_rating(db.get_task_id_user(msg.from_user.id)))
         task_id = db.get_task_id_user(msg.from_user.id)
         sp = list(map(int, db.get_users_train(msg.from_user.id)[2:-2].split(', ')))
         if int(task_id) in sp:
